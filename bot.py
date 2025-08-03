@@ -58,7 +58,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     await update.message.chat.send_action(action="typing")
     response = await generate_sokyra_reply(user_input)
-    await update.message.reply_text(response)
+    formatted_text = f"<b>Запитання:</b> {user_input}\n\n<b>Відповідь:</b> {response}"
+    await update.message.reply_text(formatted_text, parse_mode="HTML")
 
 def main():
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
