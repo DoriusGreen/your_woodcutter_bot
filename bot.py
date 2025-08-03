@@ -4,20 +4,20 @@ import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup  # Імпортуємо об'єкти для роботи з Telegram API
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters, CallbackQueryHandler  # Хендлери та контексти для Telegram
-from openai import OpenAI  # Імпортуємо OpenAI SDK
+import openai  # Імпортуємо бібліотеку OpenAI
 
 # --- Конфігурація ---
 PORT = int(os.getenv("PORT", 8443))  # Порт для Webhook (за замовчуванням 8443)
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # URL webhook-у, який вказується в Render
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Ключ OpenAI для генерації відповідей
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Токен Telegram-бота з новою назвою змінної  # Токен Telegram-бота
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Токен Telegram-бота з новою назвою змінної
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# --- Ініціалізація клієнта OpenAI ---
-openai = OpenAI(api_key=OPENAI_API_KEY)
+# Встановлюємо API-ключ OpenAI
+openai.api_key = OPENAI_API_KEY
 
 # Функція генерації відповіді в стилі Сокирача
 async def generate_sokyra_reply(user_input: str) -> str:
@@ -27,7 +27,7 @@ async def generate_sokyra_reply(user_input: str) -> str:
     Відповідь Сокирача:
     """
     try:
-        response = openai.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o",  # Використовуємо найновішу модель GPT-4o
             messages=[
                 {"role": "system", "content": "Ти — персонаж Сокирач, який відповідає різко, коротко, мудро та емоційно."},
@@ -36,7 +36,7 @@ async def generate_sokyra_reply(user_input: str) -> str:
             temperature=0.9,  # Температура для креативності
             max_tokens=150  # Максимальна довжина відповіді
         )
-        return response.choices[0].message.content.strip()  # Повертаємо згенеровану відповідь
+        return response.choices[0].message["content"].strip()  # Повертаємо згенеровану відповідь
     except Exception as e:
         logger.error(f"OpenAI error: {e}")
         return "Сокирач змовчав. Але щось він точно подумав."  # Помилка при генерації
