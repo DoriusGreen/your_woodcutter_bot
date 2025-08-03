@@ -4,7 +4,7 @@ import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters, CallbackQueryHandler
-from openai import OpenAI
+import openai
 
 # --- Конфігурація ---
 PORT = int(os.getenv("PORT", 8443))
@@ -15,7 +15,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-openai = OpenAI(api_key=OPENAI_API_KEY)
+openai.api_key = OPENAI_API_KEY
 
 # Функція генерації відповіді в стилі Сокирача
 async def generate_sokyra_reply(user_input: str) -> str:
@@ -25,7 +25,7 @@ async def generate_sokyra_reply(user_input: str) -> str:
     Сокирач відповідає:
     """
     try:
-        response = openai.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "Ти — персонаж Сокирач, який відповідає різко, коротко, мудро та емоційно."},
@@ -34,7 +34,7 @@ async def generate_sokyra_reply(user_input: str) -> str:
             temperature=0.9,
             max_tokens=150
         )
-        return response.choices[0].message.content.strip()
+        return response.choices[0].message['content'].strip()
     except Exception as e:
         logger.error(f"OpenAI error: {e}")
         return "Сокирач змовчав. Але щось він точно подумав."
