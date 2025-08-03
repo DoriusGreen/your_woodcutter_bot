@@ -10,7 +10,7 @@ from openai import OpenAI  # Імпортуємо OpenAI SDK
 PORT = int(os.getenv("PORT", 8443))  # Порт для Webhook (за замовчуванням 8443)
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # URL webhook-у, який вказується в Render
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Ключ OpenAI для генерації відповідей
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Токен Telegram-бота
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Токен Telegram-бота з новою назвою змінної  # Токен Telegram-бота
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
@@ -65,7 +65,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- Головна точка запуску ---
 def main():
-    application = Application.builder().token(BOT_TOKEN).build()  # Створюємо додаток Telegram
+    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()  # Створюємо додаток Telegram
 
     # Реєструємо хендлери
     application.add_handler(CommandHandler("start", start))  # Команда /start
