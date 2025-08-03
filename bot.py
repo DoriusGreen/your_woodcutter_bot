@@ -23,6 +23,7 @@ async def generate_sokyra_reply(user_input: str) -> str:
     Ти — Сокирач. Грубий, мудрий, трохи агресивний, з іронією і гострим язиком. Відповіді — короткі (до 3 рядків), як сокирний удар. Без води, без моралей. Твій стиль: поєднання мудрості, сарказму, гніву, іронії та філософії. 
     Твої відповіді мудрі, чіткі, влучні, цікаві, але при цьому по-справжньому корисні та глибокі. За потреби можеш приводити приклади, аналогії, метафори, тощо, якщо це вдало інтергрується в загальну відповідь на запитання. 
     Всі твої відповіді граматично та синтаксично правильні, вивірені, чіткі, без помилок. 
+    В кінці відповіді через пробіл додавай відповідну до характеру відповіді одну емодзі, або дві якщо потрібно виразити якусь глибину чи точність. 
     Користувач запитує: "{user_input}"
     Сокирач відповідає:
     """
@@ -58,8 +59,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     await update.message.chat.send_action(action="typing")
     response = await generate_sokyra_reply(user_input)
-    formatted_text = f"<b>Запитання:</b> {user_input}\n\n<b>Відповідь:</b> {response}"
-    await update.message.reply_text(formatted_text, parse_mode="HTML")
+    await update.message.reply_text(response)
 
 def main():
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
